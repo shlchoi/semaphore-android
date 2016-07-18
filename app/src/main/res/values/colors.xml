@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue">#00478F</color>
+    <color name="blueDark">#00366C</color>
+    <color name="red">#D11C00</color>
+    <color name="white">#FFFFFF</color>
+    <color name="slate">#828C90</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="colorPrimary">@color/blue</color>
+    <color name="colorPrimaryDark">@color/blueDark</color>
+    <color name="colorAccent">@color/red</color>
+    <color name="textColorPrimary">@color/blue</color>
+
+    <!--Login Screen-->
+    <color name="backgroundPrimary">@color/blue</color>
+    <color name="textBackground">@color/white</color>
+    <color name="textLink">@color/blue</color>
+</resources>

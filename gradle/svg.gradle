@@ -1,0 +1,89 @@
+import fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath('fr.avianey.androidsvgdrawable:gradle-plugin:3.0.0') {
+            // should be excluded to avoid conflict
+            exclude group: 'xerces'
+        }
+    }
+}
+
+task generateImageResources {
+    group "svg"
+    description "Generates image resources from svgs"
+    dependsOn tasks.withType(SvgDrawableTask)
+}
+
+file("design/svg").eachDir { File variant ->
+    variant.eachDir {File dir ->
+        if (dir.name.equals("drawable") || dir.name.equals("mipmap")) {
+            createDrawableFunction(variant.name, null, dir.name)
+        } else {
+            dir.eachDir {File type ->
+                if (type.name.equals("drawable") || type.name.equals("mipmap")) {
+                    createDrawableFunction(variant.name, dir.name, type.name)
+                }
+            }
+        }
+    }
+}
+
+def String capitalize(String line) {
+    return line.substring(0,1).toUpperCase().concat(line.substring(1));
+}
+
+def void createDrawableFunction(String variant, String feature, String type) {
+    String source;
+    String output;
+    String taskName;
+    String[] densities;
+
+    if (feature == null) {
+        source = "design/svg/$variant/$type"
+        output = "app/src/$variant/res"
+        taskName = "${variant}SvgTo${capitalize(type)}"
+    } else {
+        source = "design/svg/$variant/$feature/$type"
+        output = "app/src/$variant/res/$feature"
+        taskName = "${variant}${capitalize(feature)}SvgTo${capitalize(type)}"
+    }
+
+    if (type.equals("drawable")) {
+        densities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
+    } else {
+        densities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+    }
+
+    task "${taskName}"(type: SvgDrawableTask) {
+        group "svg"
+
+        // specify where to pick SVG from
+        from = files(source)
+
+        // specify the android res folder
+        to = file(output)
+
+        // create qualified directories if missing
+        createMissingDirectories = true
+
+        // override files only if necessary
+        overwriteMode = 'ifModified'
+
+        outputType = type
+
+        // relative path of the file specifying nine patch specs
+        ninePatchConfig = file("${source}/9patch.json")
+
+        // let generate PNG for the following densities only
+        targetedDensities = densities
+
+        // output format of the generated resources
+        outputFormat = 'PNG'
+    }
+}

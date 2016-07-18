@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Semaphore</string>
+
+    <!--LOGIN-->
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_forgot_password">Forgot your password?</string>
+    <string name="login_register">Sign up for an account</string>
+    <string name="login_about">About</string>
+
+    <!--MAIN-->
+    <string name="main_current_heading">Currently in mailbox</string>
+</resources>
