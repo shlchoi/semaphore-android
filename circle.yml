@@ -4,6 +4,10 @@ machine:
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
 
+general:
+  artifacts:
+    - app/build/outputs
+
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "android-24"
@@ -17,7 +21,7 @@ dependencies:
 test:
     pre:
     - ./gradlew checkstyle
-    - ./gradlew lint
+    - ./gradlew lintDebug
     - ./gradlew clean test
 
 general:
