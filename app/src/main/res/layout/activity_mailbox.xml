@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="ca.semaphore.app.fragments.LoginFragment"
-    tools:layout="@layout/fragment_login"
+    android:name="ca.semaphore.app.fragments.MailboxFragment"
+    tools:layout="@layout/fragment_mailbox"
     />

@@ -111,6 +111,37 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443667837969:android:87ed4a051b3f58b7",
+        "android_client_info": {
+          "package_name": "ca.semaphore.app.beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "443667837969-334u13745gvane98il6uvnd1acprsggd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZvlbM14VnJi5HgFLDulkNvYfeYRLyLLQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"

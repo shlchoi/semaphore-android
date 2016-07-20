@@ -6,24 +6,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import ca.semaphore.app.R;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getCanonicalName();
 
-    @Bind(R.id.login_button)
-    Button mLoginButton;
+    public static final int REQUEST_CODE_REGISTER = 0x01;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
     }
 
     void goToPlayStore() {
@@ -33,11 +27,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
-    }
-
-    @OnClick(R.id.login_button)
-    void onLoginClick() {
-
     }
 
     public static Intent createIntent(Context context) {

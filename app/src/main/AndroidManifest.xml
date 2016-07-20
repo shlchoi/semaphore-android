@@ -15,18 +15,35 @@
 
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_login"
             android:theme="@style/AppTheme.NoActionBar"
             >
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.VIEW" />
 
             </intent-filter>
-
         </activity>
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/title_main"
+            android:theme="@style/AppTheme"
+            />
+
+        <activity
+            android:name=".activities.RegistrationActivity"
+            android:label="@string/title_registration"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".activities.LoginActivity"
+            />
+
+        <activity
+            android:name=".activities.MailboxActivity"
+            android:label="@string/title_mailbox"
+            android:theme="@style/AppTheme"
+            />
 
         <meta-data
             android:name="io.fabric.ApiKey"

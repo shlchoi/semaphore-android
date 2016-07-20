@@ -5,12 +5,14 @@
     <color name="red">#D11C00</color>
     <color name="white">#FFFFFF</color>
     <color name="slate">#828C90</color>
+    <color name="gunmetal">#2C2827</color>
+    <color name="smoke">#D2D2D2</color>
     <color name="transparent">#00000000</color>
 
     <color name="colorPrimary">@color/blue</color>
     <color name="colorPrimaryDark">@color/blueDark</color>
     <color name="colorAccent">@color/red</color>
-    <color name="textColorPrimary">@color/blue</color>
+    <color name="textColorPrimary">@color/gunmetal</color>
 
     <!--Login Screen-->
     <color name="backgroundPrimary">@color/blue</color>
