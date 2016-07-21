@@ -35,3 +35,12 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task copyCIArtifacts << { // because why not, doubleshift and nested copy (intuitive, isn't it?)
+    if (System.getenv("CIRCLECI").equals("true")) {
+        copy {
+            from(file('app/build/outputs/').listFiles())
+            into System.getenv('CIRCLE_ARTIFACTS')
+        }
+    }
+}

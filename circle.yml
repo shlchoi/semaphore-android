@@ -11,7 +11,7 @@ general:
 
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "android-24"
+    - echo y | android update sdk --no-ui --all --filter "android-23"
     - echo y | android update sdk --no-ui --all --filter "tools"
     - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.3"
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository"
@@ -22,7 +22,7 @@ dependencies:
 test:
     pre:
     - ./gradlew checkstyle
-    - ./gradlew lintDebug
+    - ./gradlew lint
     - ./gradlew clean test
 
 general:
