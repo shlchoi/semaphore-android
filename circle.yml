@@ -6,7 +6,8 @@ machine:
 
 general:
   artifacts:
-    - app/build/outputs
+    - outputs
+    - reports
 
 dependencies:
   pre:

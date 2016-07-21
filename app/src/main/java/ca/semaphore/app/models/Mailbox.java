@@ -1,5 +1,7 @@
 package ca.semaphore.app.models;
 
+import android.text.TextUtils;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
@@ -35,5 +37,15 @@ public class Mailbox {
 
     public String getOwner() {
         return mOwner;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Mailbox) {
+            Mailbox o = (Mailbox) obj;
+            return TextUtils.equals(o.getMailboxId(), getMailboxId());
+        }
+
+        return false;
     }
 }

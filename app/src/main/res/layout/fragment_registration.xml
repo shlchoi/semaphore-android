@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:hint="@string/registration_first_name"
+            android:inputType="textPersonName"
             android:textSize="16sp"
             />
 
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:hint="@string/registration_last_name"
+            android:inputType="textPersonName"
             android:textSize="16sp"
             />
 
@@ -36,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:hint="@string/registration_email"
+            android:inputType="textEmailAddress"
             android:textSize="16sp"
             />
 

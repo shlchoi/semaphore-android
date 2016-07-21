@@ -6,7 +6,7 @@
     <string name="login_email_hint">Email</string>
     <string name="login_password_hint">Password</string>
     <string name="login_button">Login</string>
-    <string name="login_button_logging_in">Logging In...</string>
+    <string name="login_button_logging_in">Logging In&#8230;</string>
     <string name="login_forgot_password">Forgot your password?</string>
     <string name="login_register">Sign up for an account</string>
     <string name="login_about">About</string>

@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -15,6 +16,10 @@
         <item name="colorPrimary">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.LightStatus" parent="AppTheme.NoActionBar"/>
+    <style name="AppTheme.Spinner" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+    </style>
 
 </resources>

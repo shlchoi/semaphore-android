@@ -1,7 +1,7 @@
 package ca.semaphore.app.fragments;
 
+import android.animation.Animator;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -69,28 +69,44 @@ public class LoginFragment extends Fragment {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     if (mReturning) {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                MainActivity.start(getActivity());
-                                getActivity().finish();
-                            }
-                        }, 1000);
+                        mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0)
+                                .setListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        MainActivity.start(getActivity());
+                                        getActivity().finish();
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
                     } else {
                         MainActivity.start(getActivity());
                         getActivity().finish();
                     }
                 } else {
-                    mReturning = false;
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    mReturning = false;
                     mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0);
                     mBackground.animate().setDuration(500).setStartDelay(1000).translationY(0);
                     mFormLayout.animate().setDuration(500).setStartDelay(1000).translationY(0);
+                    mEmail.setEnabled(true);
+                    mPassword.setEnabled(true);
                 }
             }
         };
