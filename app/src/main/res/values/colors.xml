@@ -3,11 +3,15 @@
     <color name="blue">#00478F</color>
     <color name="blueDark">#00366C</color>
     <color name="red">#D11C00</color>
+    <color name="cloud">#EEEEEE</color>
     <color name="white">#FFFFFF</color>
     <color name="slate">#828C90</color>
     <color name="gunmetal">#2C2827</color>
     <color name="smoke">#D2D2D2</color>
     <color name="transparent">#00000000</color>
+
+    <color name="black12">#1E000000</color>
+    <color name="black20">#33000000</color>
 
     <color name="colorPrimary">@color/blue</color>
     <color name="colorPrimaryDark">@color/blueDark</color>

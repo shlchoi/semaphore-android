@@ -1,5 +1,6 @@
 package ca.semaphore.app.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -55,33 +54,34 @@ public class MailboxFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mailbox, container);
         ButterKnife.bind(this, view);
         return view;
     }
 
+    @SuppressLint("SetTextI18n") // TODO: remove mailbox serial when decision made
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@Nullable View view,
+                              @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mMailboxSerial.setText("temp_" + UUID.randomUUID().toString());
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            } else {
+                Log.d(TAG, "onAuthStateChanged:signed_out");
             }
         };
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().setResult(Activity.RESULT_CANCELED);
@@ -128,18 +128,22 @@ public class MailboxFragment extends Fragment {
         }
 
         FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            return;
+        }
         Mailbox mailbox = new Mailbox(mMailboxSerial.getText().toString(),
-                mMailboxName.getText().toString(), user.getUid());
-        mDatabase.child("mailboxes").child(mMailboxSerial.getText().toString()).setValue(mailbox)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
-                }
-            }
-        });
+                mMailboxName.getText().toString());
+        mDatabase.child("users")
+                 .child(user.getUid())
+                 .child("mailboxes")
+                 .child(mailbox.getMailboxId())
+                 .setValue(mailbox)
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                         getActivity().setResult(Activity.RESULT_OK);
+                         getActivity().finish();
+                     }
+                 });
     }
 }
