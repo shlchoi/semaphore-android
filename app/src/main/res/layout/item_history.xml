@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingRight="16dp"
+        android:paddingEnd="16dp"
+        >
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|left|start"
+            android:gravity="center_vertical"
+            tools:text="Wednesday September 30, 2017"
+            />
+
+        <TextView
+            android:id="@+id/items_text"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|right|end"
+            android:drawablePadding="8dp"
+            android:drawableRight="@drawable/ic_expand"
+            android:gravity="center_vertical"
+            tools:text="5 items"
+            />
+
+    </FrameLayout>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/items_collapsible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:el_expanded="false"
+        >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/shadow"
+            />
+
+        <include layout="@layout/item_mail"
+                 android:paddingLeft="16dp"
+                 android:paddingStart="16dp"
+                 android:paddingRight="16dp"
+                 android:paddingEnd="16dp"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/top_shadow"
+            android:layout_gravity="bottom"
+            />
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
+</LinearLayout>

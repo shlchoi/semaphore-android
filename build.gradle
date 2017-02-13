@@ -10,11 +10,11 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0-alpha5'
+        classpath 'com.android.tools.build:gradle:2.3.0-beta3'
         classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'io.fabric.tools:gradle:1.21.5'
+        classpath 'io.fabric.tools:gradle:1.21.6'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'me.tatarka:gradle-retrolambda:3.2.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.5.0'
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -22,7 +22,6 @@ buildscript {
 
     }
 
-    // currently required to make lint happy with retrolambda. Revisit later
     configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
@@ -36,11 +35,13 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task copyCIArtifacts << { // because why not, doubleshift and nested copy (intuitive, isn't it?)
-    if (System.getenv("CIRCLECI").equals("true")) {
-        copy {
-            from(file('app/build/outputs/').listFiles())
-            into System.getenv('CIRCLE_ARTIFACTS')
+task copyCIArtifacts {
+    doLast {
+        if (System.getenv("CIRCLECI") == "true") {
+            copy {
+                from(file('app/build/outputs/').listFiles())
+                into System.getenv('CIRCLE_ARTIFACTS')
+            }
         }
     }
 }

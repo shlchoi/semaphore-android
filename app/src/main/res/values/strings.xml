@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Semaphore</string>
 
     <!--LOGIN-->
@@ -16,6 +16,27 @@
 
     <!--MAIN-->
     <string name="main_current_heading">Currently in mailbox</string>
+    <string name="main_date_heading">EEEE MMMM dd, yyyy</string>
+    <plurals name="main_letters">
+        <item quantity="one">%d letter</item>
+        <item quantity="other">%d letters</item>
+    </plurals>
+    <plurals name="main_magazines">
+        <item quantity="one">%d magazine</item>
+        <item quantity="other">%d magazines</item>
+    </plurals>
+    <plurals name="main_newspapers">
+        <item quantity="one">%d newspaper</item>
+        <item quantity="other">%d newspapers</item>
+    </plurals>
+    <plurals name="main_parcels">
+        <item quantity="one">%d parcel</item>
+        <item quantity="other">%d parcels</item>
+    </plurals>
+    <plurals name="main_items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
 
     <!--REGISTRATION-->
     <string name="registration_first_name">First Name</string>
@@ -50,5 +71,13 @@
     <string name="title_registration">Sign Up</string>
     <string name="title_main">@string/app_name</string>
     <string name="title_mailbox">Add a Mailbox</string>
+
+    <!--NOTIFICATIONS-->
+    <string name="notification_mail_title">Mail received</string>
+    <plurals name="notification_mail_received_single_mailbox">
+        <item quantity="one">You have %1$d new item in %2$s</item>
+        <item quantity="other">You have %1$d new items in %2$s</item>
+    </plurals>
+    <string name="notification_mail_received_multi_mailbox" tools:ignore="PluralsCandidate">You have %1$d new items in multiple mailboxes</string>
 
 </resources>

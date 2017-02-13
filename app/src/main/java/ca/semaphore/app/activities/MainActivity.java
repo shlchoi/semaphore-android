@@ -3,6 +3,7 @@ package ca.semaphore.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -19,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public static Intent createIntent(Context context) {
+    public static Intent createIntent(@NonNull Context context) {
         return new Intent(context, MainActivity.class);
     }
 
-    public static void start(Context context) {
+    public static void start(@NonNull Context context) {
         context.startActivity(createIntent(context));
     }
 }
