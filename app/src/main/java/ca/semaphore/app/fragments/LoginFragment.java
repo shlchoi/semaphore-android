@@ -69,48 +69,45 @@ public class LoginFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    if (mReturning) {
-                        mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0)
-                                .setListener(new Animator.AnimatorListener() {
-                                    @Override
-                                    public void onAnimationStart(Animator animator) {
+        mAuthListener = firebaseAuth -> {
+            final FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                if (mReturning) {
+                    mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0)
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animator) {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onAnimationEnd(Animator animator) {
-                                        MainActivity.start(getActivity());
-                                        getActivity().finish();
-                                    }
+                                @Override
+                                public void onAnimationEnd(Animator animator) {
+                                    MainActivity.start(getActivity());
+                                    getActivity().finish();
+                                }
 
-                                    @Override
-                                    public void onAnimationCancel(Animator animator) {
+                                @Override
+                                public void onAnimationCancel(Animator animator) {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onAnimationRepeat(Animator animator) {
+                                @Override
+                                public void onAnimationRepeat(Animator animator) {
 
-                                    }
-                                });
-                    } else {
-                        MainActivity.start(getActivity());
-                        getActivity().finish();
-                    }
+                                }
+                            });
                 } else {
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                    mReturning = false;
-                    mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0);
-                    mBackground.animate().setDuration(500).setStartDelay(1000).translationY(0);
-                    mFormLayout.animate().setDuration(500).setStartDelay(1000).translationY(0);
-                    mEmail.setEnabled(true);
-                    mPassword.setEnabled(true);
+                    MainActivity.start(getActivity());
+                    getActivity().finish();
                 }
+            } else {
+                Log.d(TAG, "onAuthStateChanged:signed_out");
+                mReturning = false;
+                mLogo.animate().setDuration(500).setStartDelay(1000).translationY(0);
+                mBackground.animate().setDuration(500).setStartDelay(1000).translationY(0);
+                mFormLayout.animate().setDuration(500).setStartDelay(1000).translationY(0);
+                mEmail.setEnabled(true);
+                mPassword.setEnabled(true);
             }
         };
     }

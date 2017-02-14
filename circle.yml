@@ -48,7 +48,7 @@ test:
     pre:
     - ./gradlew checkstyle
     - ./gradlew lint
-    - ./gradlew clean test
+    - ./gradlew clean
 
 general:
   artifacts:

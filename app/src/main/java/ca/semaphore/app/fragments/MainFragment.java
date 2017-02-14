@@ -31,7 +31,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ca.semaphore.app.DataStore;
 import ca.semaphore.app.R;
 import ca.semaphore.app.activities.LoginActivity;
 import ca.semaphore.app.activities.MailboxActivity;
@@ -41,9 +40,11 @@ import ca.semaphore.app.adapters.MailboxAdapter;
 import ca.semaphore.app.data.DataBus;
 import ca.semaphore.app.data.events.DeliveryEvent;
 import ca.semaphore.app.data.events.MailboxEvent;
+import ca.semaphore.app.data.events.NotificationEvent;
 import ca.semaphore.app.data.events.SnapshotEvent;
 import ca.semaphore.app.database.DeliveryDataSource;
 import ca.semaphore.app.database.MailboxDataSource;
+import ca.semaphore.app.models.Delivery;
 import ca.semaphore.app.models.Mailbox;
 import ca.semaphore.app.services.FirebaseService;
 import ca.semaphore.app.sharedprefs.SemaphoreSharedPrefs;
@@ -139,7 +140,7 @@ public class MainFragment extends Fragment {
                     deliveryDataSource.query(getActivity(),
                                              mailbox.getMailboxId(),
                                              deliveries -> historyAdapter.setDeliveries(deliveries));
-                    updateCurrentItems(mailbox.getMailboxId());
+                    updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(), mailbox.getMailboxId()));
                     SemaphoreSharedPrefs.saveMailbox(getActivity(), mailbox.getMailboxId());
                 }
             }
@@ -165,7 +166,14 @@ public class MainFragment extends Fragment {
 
                                     if (lastMailboxPosition > -1) {
                                         mailboxSpinner.setSelection(lastMailboxPosition);
+                                    } else {
+                                        Mailbox selected = mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition());
+                                        lastMailboxId = selected.getMailboxId();
+                                        SemaphoreSharedPrefs.saveMailbox(getActivity(), lastMailboxId);
                                     }
+
+                                    updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(),
+                                                                                        lastMailboxId));
                                     refreshActionBar();
                                 });
     }
@@ -201,7 +209,7 @@ public class MainFragment extends Fragment {
         if (TextUtils.equals(mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition())
                                            .getMailboxId(),
                              snapshotEvent.mailboxId)) {
-            updateCurrentItems(snapshotEvent.mailboxId);
+            updateCurrentItems(snapshotEvent.delivery);
         }
     }
 
@@ -236,10 +244,8 @@ public class MainFragment extends Fragment {
         }
     }
 
-    private void updateCurrentItems(@NonNull String mailboxId) {
-        DeliveryViewModel viewModel = DeliveryTransformer.toViewModel(getActivity(),
-                                                                      DataStore.getInstance()
-                                                                               .getLastSnapshot(mailboxId));
+    private void updateCurrentItems(@Nullable Delivery delivery) {
+        DeliveryViewModel viewModel = DeliveryTransformer.toViewModel(getActivity(), delivery);
         ViewUtils.setTextAndUpdateVisibility(lettersTextView, viewModel.mLettersText);
         ViewUtils.setTextAndUpdateVisibility(magazinesTextView, viewModel.mMagazineText);
         ViewUtils.setTextAndUpdateVisibility(newspapersTextView, viewModel.mNewspapersText);
@@ -271,6 +277,12 @@ public class MainFragment extends Fragment {
         super.onStart();
         auth.addAuthStateListener(authListener);
         DataBus.subscribe(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DataBus.sendEvent(new NotificationEvent());
     }
 
     @Override

@@ -46,7 +46,7 @@ public class DeliveryDataSource {
             protected List<Delivery> doInBackground(Void... params) {
                 SQLiteDatabase database = helper.getReadableDatabase();
                 Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -30); // 30 days of deliveries
+                cal.add(Calendar.DATE, -31); // 30 days of deliveries
                 String[] selectionArgs = {
                         mailboxId,
                         Long.toString(cal.getTimeInMillis() / 1000),
