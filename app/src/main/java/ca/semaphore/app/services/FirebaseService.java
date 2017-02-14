@@ -32,8 +32,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ca.semaphore.app.R;
+import ca.semaphore.app.SemaphoreApplication;
 import ca.semaphore.app.activities.MainActivity;
 import ca.semaphore.app.data.DataBus;
+import ca.semaphore.app.data.events.AckEvent;
 import ca.semaphore.app.data.events.NotificationEvent;
 import ca.semaphore.app.data.events.SnapshotEvent;
 import ca.semaphore.app.database.DeliveryDataSource;
@@ -178,14 +180,13 @@ public class FirebaseService extends Service {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Delivery delivery = dataSnapshot.getValue(Delivery.class);
-
                 deliveryDataSource.update(FirebaseService.this,
                                           mailbox.getMailboxId(),
                                           delivery,
                                           null);
 
                 if (delivery.getTotal() > 0 && delivery.getTimestamp() > (timestamp / 1000)) {
-                    sendNotification(mailbox, delivery);
+                    FirebaseService.this.notify(mailbox, delivery);
                 }
             }
         };
@@ -199,7 +200,7 @@ public class FirebaseService extends Service {
         }
     }
 
-    private void sendNotification(@NonNull Mailbox mailbox, @NonNull Delivery delivery) {
+    private void notify(@NonNull Mailbox mailbox, @NonNull Delivery delivery) {
         notifAmount += delivery.getTotal();
         notifMailboxes.add(mailbox);
 
@@ -215,19 +216,25 @@ public class FirebaseService extends Service {
         }
         Log.i(TAG, message);
 
-        Intent mainIntent = MainActivity.createIntent(getApplicationContext());
+        if (SemaphoreApplication.isVisible()) {
+            DataBus.sendEvent(new NotificationEvent(mailbox.getMailboxId(), message));
+        } else {
+            notifyUser(mailbox.getMailboxId(), message);
+        }
+    }
+
+    private void notifyUser(@NonNull String mailboxId, @NonNull String message) {
+        Intent mainIntent = MainActivity.createIntent(getApplicationContext(), mailboxId);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(),
-                                                                        0,
-                                                                        new Intent[]{mainIntent},
-                                                                        PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(),
+                                                                  0,
+                                                                  new Intent[]{mainIntent},
+                                                                  PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_statusbar)
                .setContentTitle(getString(R.string.notification_mail_title))
-               .setColor(ResourcesCompat.getColor(getResources(),
-                                                  R.color.colorPrimary,
-                                                  null))
+               .setColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null))
                .setContentText(message)
                .setAutoCancel(true)
                .setContentIntent(pendingIntent);
@@ -263,7 +270,7 @@ public class FirebaseService extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNotificationEvent(@NonNull NotificationEvent notificationEvent) {
+    public void onNotificationEvent(@NonNull AckEvent ackEvent) {
         notificationManager.cancel(0);
         notifAmount = 0;
         notifMailboxes.clear();

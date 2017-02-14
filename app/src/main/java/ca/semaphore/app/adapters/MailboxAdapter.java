@@ -47,6 +47,11 @@ public class MailboxAdapter extends BaseAdapter {
         }
     }
 
+    public int getItemPosition(@NonNull String mailboxId) {
+        Mailbox mailbox = new Mailbox(mailboxId, "");
+        return mMailboxList.indexOf(mailbox);
+    }
+
     @Override
     public View getDropDownView(@IntRange(from=0) int position,
                                 @Nullable View view,

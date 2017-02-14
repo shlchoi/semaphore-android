@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import ca.semaphore.app.R;
 
-public class MailboxActivity extends AppCompatActivity {
+public class MailboxActivity extends SemaphoreActivity {
     private static final String TAG = MailboxActivity.class.getCanonicalName();
 
     @Override

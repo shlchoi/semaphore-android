@@ -1,17 +1,25 @@
 package ca.semaphore.app.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +46,7 @@ import ca.semaphore.app.activities.MainActivity;
 import ca.semaphore.app.adapters.DeliveryAdapter;
 import ca.semaphore.app.adapters.MailboxAdapter;
 import ca.semaphore.app.data.DataBus;
+import ca.semaphore.app.data.events.AckEvent;
 import ca.semaphore.app.data.events.DeliveryEvent;
 import ca.semaphore.app.data.events.MailboxEvent;
 import ca.semaphore.app.data.events.NotificationEvent;
@@ -55,6 +64,7 @@ import ca.semaphore.app.viewmodels.DeliveryViewModel;
 public class MainFragment extends Fragment {
 
     private static final String TAG = MainFragment.class.getCanonicalName();
+    private static final String ARG_MAILBOX_ID = "mailbox_id";
 
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
@@ -66,6 +76,9 @@ public class MainFragment extends Fragment {
 
     private MailboxDataSource mailboxDataSource;
     private DeliveryDataSource deliveryDataSource;
+
+    @BindView(R.id.main_coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     @BindView(R.id.main_letters)
     TextView lettersTextView;
@@ -98,7 +111,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
         View actionBar = inflater.inflate(R.layout.actionbar_main, null);
         ButterKnife.bind(this, view);
 
@@ -137,10 +150,7 @@ public class MainFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Mailbox mailbox = mailboxAdapter.getItem(position);
                 if (historyAdapter != null) {
-                    deliveryDataSource.query(getActivity(),
-                                             mailbox.getMailboxId(),
-                                             deliveries -> historyAdapter.setDeliveries(deliveries));
-                    updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(), mailbox.getMailboxId()));
+                    retrieveMailboxData(mailbox);
                     SemaphoreSharedPrefs.saveMailbox(getActivity(), mailbox.getMailboxId());
                 }
             }
@@ -151,31 +161,32 @@ public class MainFragment extends Fragment {
             }
         });
 
-        mailboxDataSource.query(getActivity(),
-                                mailboxes -> {
-                                    String lastMailboxId = SemaphoreSharedPrefs.getLastMailbox(getActivity());
-                                    int lastMailboxPosition = -1;
+        mailboxDataSource.query(getActivity(), mailboxes -> {
+            String lastMailboxId = null;
+            if (getArguments() != null) {
+                lastMailboxId = getArguments().getString(ARG_MAILBOX_ID);
+            }
+            if (TextUtils.isEmpty(lastMailboxId)) {
+                lastMailboxId = SemaphoreSharedPrefs.getLastMailbox(getActivity());
+            }
 
-                                    for (int i = 0; i < mailboxes.size(); i++) {
-                                        Mailbox mailbox = mailboxes.get(i);
-                                        mailboxAdapter.addItem(mailbox);
-                                        if (TextUtils.equals(mailbox.getMailboxId(), lastMailboxId)) {
-                                            lastMailboxPosition = i;
-                                        }
-                                    }
+            for (Mailbox mailbox : mailboxes) {
+                mailboxAdapter.addItem(mailbox);
+            }
 
-                                    if (lastMailboxPosition > -1) {
-                                        mailboxSpinner.setSelection(lastMailboxPosition);
-                                    } else {
-                                        Mailbox selected = mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition());
-                                        lastMailboxId = selected.getMailboxId();
-                                        SemaphoreSharedPrefs.saveMailbox(getActivity(), lastMailboxId);
-                                    }
+            int lastMailboxPosition = mailboxAdapter.getItemPosition(lastMailboxId);
+            if (lastMailboxPosition > -1) {
+                mailboxSpinner.setSelection(lastMailboxPosition);
+            } else {
+                Mailbox selected = mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition());
+                lastMailboxId = selected.getMailboxId();
+                SemaphoreSharedPrefs.saveMailbox(getActivity(), lastMailboxId);
+            }
 
-                                    updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(),
-                                                                                        lastMailboxId));
-                                    refreshActionBar();
-                                });
+            updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(),
+                                                                lastMailboxId));
+            refreshActionBar();
+        });
     }
 
     private void initializeHistoryRecyclerView() {
@@ -187,6 +198,13 @@ public class MainFragment extends Fragment {
         historyRecyclerView.addItemDecoration(divider);
         historyAdapter = new DeliveryAdapter(getContext());
         historyRecyclerView.setAdapter(historyAdapter);
+    }
+
+    private void retrieveMailboxData(Mailbox mailbox) {
+        deliveryDataSource.query(getActivity(),
+                                 mailbox.getMailboxId(),
+                                 deliveries -> historyAdapter.setDeliveries(deliveries));
+        updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(), mailbox.getMailboxId()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -227,6 +245,49 @@ public class MainFragment extends Fragment {
                                      deliveryEvent.mailboxId,
                                      results -> historyAdapter.setDeliveries(results));
         }
+
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNotificationEvent(@NonNull NotificationEvent notificationEvent) {
+        String currentMailboxId = mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition())
+                                              .getMailboxId();
+
+        Snackbar snackbar;
+        SpannableStringBuilder spanBuilder = new SpannableStringBuilder().append(notificationEvent.message);
+        spanBuilder.setSpan(new ForegroundColorSpan(Color.WHITE),
+                            0,
+                            notificationEvent.message.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if (TextUtils.equals(notificationEvent.mailboxId, currentMailboxId)) {
+            snackbar = Snackbar.make(coordinatorLayout,
+                                     spanBuilder,
+                                     BaseTransientBottomBar.LENGTH_LONG);
+        } else {
+            snackbar = Snackbar.make(coordinatorLayout,
+                                     spanBuilder,
+                                     BaseTransientBottomBar.LENGTH_INDEFINITE);
+            int position = mailboxAdapter.getItemPosition(notificationEvent.mailboxId);
+            if (position != -1) {
+                snackbar.setAction(R.string.notification_view_mailbox, (view) -> {
+                    mailboxSpinner.setSelection(position);
+                });
+            }
+            snackbar.setActionTextColor(ResourcesCompat.getColor(getContext().getResources(),
+                                                                 R.color.colorAccent,
+                                                                 null));
+        }
+
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                DataBus.sendEvent(new AckEvent());
+            }
+        });
+        snackbar.show();
     }
 
     private void refreshActionBar() {
@@ -282,7 +343,11 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        DataBus.sendEvent(new NotificationEvent());
+        DataBus.sendEvent(new AckEvent());
+
+        if (mailboxAdapter != null && mailboxAdapter.getCount() > 0) {
+            retrieveMailboxData(mailboxAdapter.getItem(mailboxSpinner.getSelectedItemPosition()));
+        }
     }
 
     @Override
@@ -292,5 +357,15 @@ public class MainFragment extends Fragment {
             auth.removeAuthStateListener(authListener);
         }
         DataBus.unsubscribe(this);
+    }
+
+    public static MainFragment getInstance(@Nullable String mailboxId) {
+        MainFragment fragment = new MainFragment();
+        if (!TextUtils.isEmpty(mailboxId)) {
+            Bundle args = new Bundle();
+            args.putString(ARG_MAILBOX_ID, mailboxId);
+            fragment.setArguments(args);
+        }
+        return fragment;
     }
 }

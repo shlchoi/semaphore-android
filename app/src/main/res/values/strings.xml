@@ -79,5 +79,6 @@
         <item quantity="other">You have %1$d new items in %2$s</item>
     </plurals>
     <string name="notification_mail_received_multi_mailbox" tools:ignore="PluralsCandidate">You have %1$d new items in multiple mailboxes</string>
+    <string name="notification_view_mailbox">Go to mailbox</string>
 
 </resources>
