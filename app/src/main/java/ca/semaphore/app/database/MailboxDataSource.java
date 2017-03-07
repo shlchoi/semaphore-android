@@ -77,7 +77,7 @@ public class MailboxDataSource {
                 return database.insertWithOnConflict(MailboxSchema.TABLE_NAME,
                                                      null,
                                                      contentValues,
-                                                     SQLiteDatabase.CONFLICT_IGNORE);
+                                                     SQLiteDatabase.CONFLICT_REPLACE);
             }
 
             @Override

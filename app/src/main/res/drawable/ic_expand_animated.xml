@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:drawable="@drawable/ic_expand"
+    tools:ignore="NewApi"
+    >
+
+    <target
+        android:name="@string/expand_collapse_icon"
+        android:animation="@animator/expand_collapse_rotation"/>
+
+</animated-vector>

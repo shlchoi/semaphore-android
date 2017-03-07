@@ -2,6 +2,7 @@ package ca.semaphore.app.transformers;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -27,11 +28,12 @@ public class DeliveryTransformer {
 
     @NonNull
     public static List<DeliveryViewModel> toViewModels(@NonNull Context context,
+                                                       @IntRange(from = 0) int startPosition,
                                                        @Nullable List<Delivery> dataModels) {
         List<DeliveryViewModel> viewModels = new ArrayList<>();
         if (CollectionUtils.isNonEmpty(dataModels)) {
-            for (Delivery delivery : dataModels) {
-                viewModels.add(toViewModel(context, delivery));
+            for (int i = 0; i < dataModels.size(); i++) {
+                viewModels.add(toViewModel(context, i + startPosition, dataModels.get(i)));
 
             }
         }
@@ -41,6 +43,7 @@ public class DeliveryTransformer {
 
     @NonNull
     public static DeliveryViewModel toViewModel(@NonNull Context context,
+                                                @IntRange(from = 0) int position,
                                                 @Nullable Delivery dataModel) {
 
         if (simpleDateFormat == null) {
@@ -49,6 +52,8 @@ public class DeliveryTransformer {
         }
 
         DeliveryViewModel viewModel = new DeliveryViewModel();
+        viewModel.position = position;
+
         if (dataModel == null) {
             return viewModel;
         }
@@ -81,6 +86,9 @@ public class DeliveryTransformer {
                                                                  dataModel.getParcels(),
                                                                  dataModel.getParcels());
         }
+
+        viewModel.numItems = dataModel.getTotal();
+        viewModel.isCategorising = dataModel.isCategorising();
 
         return viewModel;
     }

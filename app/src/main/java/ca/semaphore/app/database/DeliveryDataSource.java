@@ -46,7 +46,7 @@ public class DeliveryDataSource {
             protected List<Delivery> doInBackground(Void... params) {
                 SQLiteDatabase database = helper.getReadableDatabase();
                 Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -30); // 30 days of deliveries
+                cal.add(Calendar.DATE, -31); // 30 days of deliveries
                 String[] selectionArgs = {
                         mailboxId,
                         Long.toString(cal.getTimeInMillis() / 1000),
@@ -54,9 +54,12 @@ public class DeliveryDataSource {
                 List<Delivery> deliveries = new ArrayList<>();
 
                 Cursor cursor = database.query(DeliverySchema.TABLE_NAME,
-                                               COLUMNS, SELECT_WHERE,
-                                               selectionArgs, SELECT_GROUP_BY,
-                                               null, SELECT_ORDER_BY);
+                                               COLUMNS,
+                                               SELECT_WHERE,
+                                               selectionArgs,
+                                               SELECT_GROUP_BY,
+                                               null,
+                                               SELECT_ORDER_BY);
 
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
@@ -95,12 +98,13 @@ public class DeliveryDataSource {
                 contentValues.put(DeliverySchema.COLUMN_MAGAZINES, delivery.getMagazines());
                 contentValues.put(DeliverySchema.COLUMN_NEWSPAPERS, delivery.getNewspapers());
                 contentValues.put(DeliverySchema.COLUMN_PARCELS, delivery.getParcels());
+                contentValues.put(DeliverySchema.COLUMN_CATEGORISING, delivery.isCategorising());
 
                 // using ignore here as data should never change on Firebase, only new data is added
                 return database.insertWithOnConflict(DeliverySchema.TABLE_NAME,
                                                      null,
                                                      contentValues,
-                                                     SQLiteDatabase.CONFLICT_IGNORE);
+                                                     SQLiteDatabase.CONFLICT_REPLACE);
             }
 
             @Override

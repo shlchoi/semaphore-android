@@ -4,7 +4,6 @@
     package="ca.semaphore.app"
     >
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -23,6 +22,8 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_login"
             android:theme="@style/AppTheme.NoActionBar.NoBackground"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             >
             <intent-filter tools:ignore="GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +37,7 @@
             android:name=".activities.MainActivity"
             android:label="@string/title_main"
             android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
             />
 
         <activity
@@ -43,12 +45,14 @@
             android:label="@string/title_registration"
             android:theme="@style/AppTheme"
             android:parentActivityName=".activities.LoginActivity"
+            android:launchMode="singleTop"
             />
 
         <activity
             android:name=".activities.MailboxActivity"
             android:label="@string/title_mailbox"
             android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
             />
 
         <service android:name=".services.FirebaseService"/>

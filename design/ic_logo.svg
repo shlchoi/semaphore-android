@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        
+    </defs>
+    <g id="Android" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo" transform="translate(-16.000000, -16.000000)">
+            <g transform="translate(28.000000, 24.000000)">
+                <polygon id="Path-73" fill="#D11C00" points="40 36 48.5 36 48.5 8.13484839 56.5 8 56.5 0 40 0"></polygon>
+                <polygon id="Combined-Shape" fill="#FFFFFF" points="12 32 12 40 20 40 20 32"></polygon>
+                <path d="M7.10542736e-14,68 L32,68 L32,80 L44,80 L44,68 L72,68 L72,31 C72,31 72,16 57,16 C54.0000267,16 52,16 52,16 L52,24 L57,24 C57,24 64,24 64,31 L64,42.2010297 L64,60 L32,60 L32,31 C32,31 32.0001059,24 28.9993649,24 C30.4937884,24 31.9882119,24 33.4826354,24 C35.6550902,24 40,24 40,24 L40,16 L16,16 C16,16 7.20534743e-14,16 7.10542736e-14,31 C7.10542736e-14,39.6965819 5.68434189e-14,60 5.68434189e-14,60 L8,60 L8,31 C8,24 15,24 15,24 C15,24 10,24 17,24 C24,24 24,31 24,31 L24,60 L5.68434189e-14,60 L7.10542736e-14,68 Z" id="path-1" fill="FFFFFF"/>
+            </g>
+        </g>
+    </g>
+</svg>

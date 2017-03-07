@@ -2,18 +2,39 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/main_history"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:clipChildren="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
+        >
+
+        <include
+            android:id="@+id/main_history_view"
+            layout="@layout/view_history_list"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+        <include
+            android:id="@+id/main_empty_history"
+            layout="@layout/view_history_empty"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+        <include
+            android:id="@+id/main_loading_history"
+            layout="@layout/view_history_loading"
+            />
+
+    </FrameLayout>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/main_current_view"
@@ -30,15 +51,8 @@
             app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed"
             >
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@string/main_current_heading"
-                />
-
             <include
-                layout="@layout/item_mail"
+                layout="@layout/view_current_view"
                 />
 
             <ImageView

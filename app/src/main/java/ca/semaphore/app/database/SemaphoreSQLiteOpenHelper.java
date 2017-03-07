@@ -11,7 +11,7 @@ import ca.semaphore.app.database.schema.MailboxSchema;
 public class SemaphoreSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "semaphore.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public SemaphoreSQLiteOpenHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

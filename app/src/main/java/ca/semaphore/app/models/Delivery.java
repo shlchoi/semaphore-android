@@ -23,6 +23,9 @@ public class Delivery {
     @PropertyName("parcels")
     private int parcels;
 
+    @PropertyName("categorising")
+    private boolean categorising;
+
     public Delivery() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
@@ -32,11 +35,21 @@ public class Delivery {
                     @IntRange(from=0) int magazines,
                     @IntRange(from=0) int newspapers,
                     @IntRange(from=0) int parcels) {
+        this(timestamp, letters, magazines, newspapers, parcels, false);
+    }
+
+    public Delivery(long timestamp,
+                    @IntRange(from=0) int letters,
+                    @IntRange(from=0) int magazines,
+                    @IntRange(from=0) int newspapers,
+                    @IntRange(from=0) int parcels,
+                    boolean categorising) {
         this.timestamp = timestamp;
         this.letters = letters;
         this.magazines = magazines;
         this.newspapers = newspapers;
         this.parcels = parcels;
+        this.categorising = categorising;
     }
 
     public long getTimestamp() {
@@ -63,6 +76,10 @@ public class Delivery {
         return letters + magazines + newspapers + parcels;
     }
 
+    public boolean isCategorising() {
+        return categorising;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -70,7 +87,8 @@ public class Delivery {
         builder.append(letters).append(" letters\n")
                .append(magazines).append(" magazines\n")
                .append(newspapers).append(" newspapers\n")
-               .append(parcels).append(" parcels\n");
+               .append(parcels).append(" parcels\n")
+               .append("categorising: ").append(categorising);
         return builder.toString();
     }
 }
