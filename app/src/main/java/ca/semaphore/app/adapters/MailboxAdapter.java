@@ -1,6 +1,5 @@
 package ca.semaphore.app.adapters;
 
-import android.content.Context;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +20,7 @@ public class MailboxAdapter extends BaseAdapter {
 
     private List<Mailbox> mMailboxList;
 
-    public MailboxAdapter(@NonNull Context context) {
+    public MailboxAdapter() {
         mMailboxList = new ArrayList<>();
     }
 
@@ -75,7 +74,7 @@ public class MailboxAdapter extends BaseAdapter {
             view = ViewUtils.inflate(R.layout.view_actionbar_spinner, parent, false);
             view.setTag("NON_DROPDOWN");
         }
-        TextView textView = (TextView) view;
+        TextView textView = (TextView) view.findViewById(R.id.spinner_text_view);
         textView.setText(getItem(position).getName());
         return view;
     }

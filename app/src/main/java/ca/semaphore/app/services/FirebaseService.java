@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -26,10 +27,10 @@ import com.google.firebase.database.ValueEventListener;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import ca.semaphore.app.R;
 import ca.semaphore.app.SemaphoreApplication;
@@ -49,6 +50,8 @@ import ca.semaphore.app.sharedprefs.SemaphoreSharedPrefs;
 public class FirebaseService extends Service {
 
     private static final String TAG = FirebaseService.class.getCanonicalName();
+    private static final int GROUP_NOTIFICATION_ID = -1;
+    private static final String GROUP_NAME = "Semaphore";
 
     PowerManager.WakeLock wakeLock;
 
@@ -58,8 +61,6 @@ public class FirebaseService extends Service {
     private DatabaseReference database;
 
     private NotificationManagerCompat notificationManager;
-    private int notifAmount;
-    private Set<Mailbox> notifMailboxes;
 
     private HashMap<String, Query> deliveryQueries;
     private HashMap<String, ChildEventListener> deliveryListeners;
@@ -69,6 +70,9 @@ public class FirebaseService extends Service {
 
     private DeliveryDataSource deliveryDataSource;
     private MailboxDataSource mailboxDataSource;
+
+    private HashMap<String, Integer> notificationIdMap;
+    private HashMap<String, String> notificationMessageMap;
 
     @Override
     public void onCreate() {
@@ -81,8 +85,6 @@ public class FirebaseService extends Service {
             Log.i(TAG, "Partial Wake Lock : " + wakeLock.isHeld());
         }
 
-        notifAmount = 0;
-        notifMailboxes = new HashSet<>();
         snapshotQueries = new HashMap<>();
         snapshotListeners = new HashMap<>();
         deliveryQueries = new HashMap<>();
@@ -90,6 +92,9 @@ public class FirebaseService extends Service {
 
         deliveryDataSource = new DeliveryDataSource();
         mailboxDataSource = new MailboxDataSource();
+
+        notificationMessageMap = new HashMap<>();
+        notificationIdMap = new HashMap<>();
         DataBus.subscribe(this);
     }
 
@@ -108,31 +113,17 @@ public class FirebaseService extends Service {
 
                 database.child("users")
                         .child(auth.getCurrentUser().getUid())
-                        .addListenerForSingleValueEvent(
-                                new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        // Get user value
-                                        final long timestamp = System.currentTimeMillis();
-                                        User user = dataSnapshot.getValue(User.class);
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                processUser(dataSnapshot);
+                            }
 
-                                        // remove all previous listeners
-                                        for (Mailbox mailbox : user.getMailboxes().values()) {
-                                            mailboxDataSource.update(FirebaseService.this,
-                                                                     mailbox,
-                                                                     null);
-                                            registerSnapshotListener(mailbox);
-                                            registerDeliveryListener(mailbox, timestamp);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                                    }
-                                });
-            } else {
-                unregisterListeners();
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                            }
+                        });
             }
         };
 
@@ -149,12 +140,12 @@ public class FirebaseService extends Service {
         ChildEventListener listener = new BaseChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                super.onChildAdded(dataSnapshot, s);
-                Delivery snapshot = dataSnapshot.getValue(Delivery.class);
-                SemaphoreSharedPrefs.saveSnapshot(FirebaseService.this,
-                                                  mailbox.getMailboxId(),
-                                                  snapshot);
-                DataBus.sendEvent(new SnapshotEvent(mailbox.getMailboxId(), snapshot));
+                processSnapshot(dataSnapshot, mailbox);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                processSnapshot(dataSnapshot, mailbox);
             }
         };
 
@@ -170,7 +161,6 @@ public class FirebaseService extends Service {
     private void registerDeliveryListener(@NonNull final Mailbox mailbox, final long timestamp) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -30); // 30 days of deliveries
-
         Query deliveryQuery = database.child("deliveries")
                                       .child(mailbox.getMailboxId())
                                       .orderByKey()
@@ -180,16 +170,16 @@ public class FirebaseService extends Service {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Delivery delivery = dataSnapshot.getValue(Delivery.class);
-                deliveryDataSource.update(FirebaseService.this,
-                                          mailbox.getMailboxId(),
-                                          delivery,
-                                          null);
+                processDelivery(delivery, mailbox, timestamp);
+            }
 
-                if (delivery.getTotal() > 0 && delivery.getTimestamp() > (timestamp / 1000)) {
-                    FirebaseService.this.notify(mailbox, delivery);
-                }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Delivery delivery = dataSnapshot.getValue(Delivery.class);
+                processDelivery(delivery, mailbox, timestamp);
             }
         };
+
         deliveryQuery.addChildEventListener(listener);
 
         if (!deliveryQueries.containsKey(mailbox.getMailboxId())) {
@@ -200,30 +190,63 @@ public class FirebaseService extends Service {
         }
     }
 
-    private void notify(@NonNull Mailbox mailbox, @NonNull Delivery delivery) {
-        notifAmount += delivery.getTotal();
-        notifMailboxes.add(mailbox);
+    private void processUser(@NonNull DataSnapshot dataSnapshot) {
+        final long timestamp = System.currentTimeMillis() / 1000;
+        User user = dataSnapshot.getValue(User.class);
 
+        // remove all previous listeners
+        notificationIdMap.clear();
+        for (Mailbox mailbox : user.getMailboxes().values()) {
+            mailboxDataSource.update(FirebaseService.this,
+                                     mailbox,
+                                     null);
+            registerSnapshotListener(mailbox);
+            registerDeliveryListener(mailbox, timestamp);
+            notificationIdMap.put(mailbox.getMailboxId(),
+                                  notificationIdMap.size());
+        }
+    }
+
+    private void processSnapshot(@NonNull DataSnapshot dataSnapshot, @NonNull Mailbox mailbox) {
+        Delivery snapshot = dataSnapshot.getValue(Delivery.class);
+        SemaphoreSharedPrefs.saveSnapshot(this, mailbox.getMailboxId(), snapshot);
+        DataBus.sendEvent(new SnapshotEvent(mailbox.getMailboxId(), snapshot));
+    }
+
+    private void processDelivery(@NonNull Delivery delivery,
+                                 @NonNull Mailbox mailbox,
+                                 long timestamp) {
+        deliveryDataSource.update(this, mailbox.getMailboxId(), delivery, null);
+
+        if (delivery.getTimestamp() > timestamp && (delivery.isCategorising() || delivery.getTotal() > 0)) {
+            notify(mailbox, delivery);
+        }
+    }
+
+    private void notify(@NonNull Mailbox mailbox, @NonNull Delivery delivery) {
         String message;
-        if (notifMailboxes.size() > 1) {
-            message = getResources().getString(R.string.notification_mail_received_multi_mailbox,
-                                               notifAmount);
+        if (delivery.isCategorising()) {
+            message = getString(R.string.notification_mail_received_categorising, mailbox.getName());
         } else {
-            message = getResources().getQuantityString(R.plurals.notification_mail_received_single_mailbox,
-                                                       notifAmount,
-                                                       notifAmount,
+            int notificationAmount = SemaphoreSharedPrefs.getNotificationAmount(this, mailbox.getMailboxId());
+            notificationAmount += delivery.getTotal();
+            SemaphoreSharedPrefs.saveNotificationAmount(this, mailbox.getMailboxId(), notificationAmount);
+            message = getResources().getQuantityString(R.plurals.notification_mail_received_categorised,
+                                                       notificationAmount,
+                                                       notificationAmount,
                                                        mailbox.getName());
         }
+        notificationMessageMap.put(mailbox.getMailboxId(), message);
         Log.i(TAG, message);
 
         if (SemaphoreApplication.isVisible()) {
             DataBus.sendEvent(new NotificationEvent(mailbox.getMailboxId(), message));
         } else {
-            notifyUser(mailbox.getMailboxId(), message);
+            createMailboxNotification(mailbox.getMailboxId(), message);
         }
     }
 
-    private void notifyUser(@NonNull String mailboxId, @NonNull String message) {
+    private void createMailboxNotification(@NonNull String mailboxId, @NonNull String message) {
         Intent mainIntent = MainActivity.createIntent(getApplicationContext(), mailboxId);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(),
@@ -231,14 +254,61 @@ public class FirebaseService extends Service {
                                                                   new Intent[]{mainIntent},
                                                                   PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_statusbar)
-               .setContentTitle(getString(R.string.notification_mail_title))
-               .setColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null))
-               .setContentText(message)
-               .setAutoCancel(true)
+        NotificationCompat.Builder builder = getDefaultNotificationBuilder();
+        builder.setContentText(message)
                .setContentIntent(pendingIntent);
-        notificationManager.notify(0, builder.build());
+        notificationManager.notify(notificationIdMap.get(mailboxId), builder.build());
+
+        createSummaryNotification();
+    }
+
+    private void createSummaryNotification() {
+        List<String> messages = new ArrayList<>(notificationMessageMap.values());
+        if (messages.size() < 2) {
+            notificationManager.cancel(GROUP_NOTIFICATION_ID);
+            return;
+        }
+
+        Intent mainIntent = MainActivity.createIntent(getApplicationContext());
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(),
+                                                                  0,
+                                                                  new Intent[]{mainIntent},
+                                                                  PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = getDefaultNotificationBuilder();
+        builder.setGroupSummary(true)
+               .setContentIntent(pendingIntent);
+
+        NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+
+        for (int i = 0; i < messages.size(); i++) {
+            inbox.addLine(messages.get(i));
+        }
+
+        builder.setStyle(inbox);
+
+        notificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
+    }
+
+    @NonNull
+    private NotificationCompat.Builder getDefaultNotificationBuilder() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setGroup(GROUP_NAME)
+               .setSmallIcon(R.drawable.ic_statusbar)
+               .setColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null))
+               .setContentTitle(getString(R.string.notification_mail_title))
+               .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+               .setAutoCancel(true);
+        return builder;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAcknowledgeNotification(@NonNull AckEvent ackEvent) {
+        notificationManager.cancel(notificationIdMap.get(ackEvent.mailboxId));
+        SemaphoreSharedPrefs.saveNotificationAmount(this, ackEvent.mailboxId, 0);
+        notificationMessageMap.remove(ackEvent.mailboxId);
+        createSummaryNotification();
     }
 
     private void unregisterSnapshotListener(@NonNull String mailboxId) {
@@ -267,13 +337,6 @@ public class FirebaseService extends Service {
                 unregisterSnapshotListener(mailboxId);
             }
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNotificationEvent(@NonNull AckEvent ackEvent) {
-        notificationManager.cancel(0);
-        notifAmount = 0;
-        notifMailboxes.clear();
     }
 
     @Override

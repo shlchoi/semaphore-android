@@ -3,6 +3,7 @@ package ca.semaphore.app.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,12 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryViewHolder> {
     private Context context;
     private List<Delivery> deliveries;
 
+    private SparseArray<Boolean> expandState;
+
     public DeliveryAdapter(@NonNull Context context) {
         this.context = context;
         deliveries = new ArrayList<>();
+        expandState = new SparseArray<>();
     }
 
     @Override
@@ -35,11 +39,13 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DeliveryViewHolder holder, int position) {
-        DeliveryTransformer.toViewModel(context, deliveries.get(position)).bind(holder);
+        DeliveryTransformer.toViewModel(context, position, deliveries.get(position))
+                           .bind(holder, expandState.get(position, false));
     }
 
     @Override
     public void onViewRecycled(@NonNull DeliveryViewHolder holder) {
+        expandState.put(holder.getAdapterPosition(), holder.isExpanded());
         super.onViewRecycled(holder);
         holder.init();
     }

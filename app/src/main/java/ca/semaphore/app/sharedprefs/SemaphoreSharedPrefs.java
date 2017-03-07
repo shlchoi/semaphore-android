@@ -2,6 +2,7 @@ package ca.semaphore.app.sharedprefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -18,6 +19,9 @@ public class SemaphoreSharedPrefs {
     private static final String KEY_SNAPSHOT_MAGAZINES = "%s_magazines";
     private static final String KEY_SNAPSHOT_NEWSPAPERS = "%s_newspapers";
     private static final String KEY_SNAPSHOT_PARCELS = "%s_parcels";
+    private static final String KEY_SNAPSHOT_CATEGORISING = "%s_categorising";
+
+    private static final String KEY_NOTIFICATION_AMOUNT = "%s_notifs";
 
     @Nullable
     public static String getLastMailbox(@NonNull Context context) {
@@ -47,11 +51,12 @@ public class SemaphoreSharedPrefs {
         int magazines = sharedPref.getInt(String.format(KEY_SNAPSHOT_MAGAZINES, mailboxId), 0);
         int newspapers = sharedPref.getInt(String.format(KEY_SNAPSHOT_NEWSPAPERS, mailboxId), 0);
         int parcels = sharedPref.getInt(String.format(KEY_SNAPSHOT_PARCELS, mailboxId), 0);
+        boolean categorising = sharedPref.getBoolean(String.format(KEY_SNAPSHOT_CATEGORISING, mailboxId), false);
 
         if (timestamp == 0) {
             return null;
         }
-        return new Delivery(timestamp, letters, magazines, newspapers, parcels);
+        return new Delivery(timestamp, letters, magazines, newspapers, parcels, categorising);
     }
 
     public static void saveSnapshot(@NonNull Context context,
@@ -65,6 +70,29 @@ public class SemaphoreSharedPrefs {
         editor.putInt(String.format(KEY_SNAPSHOT_MAGAZINES, mailboxId), delivery.getMagazines());
         editor.putInt(String.format(KEY_SNAPSHOT_NEWSPAPERS, mailboxId), delivery.getNewspapers());
         editor.putInt(String.format(KEY_SNAPSHOT_PARCELS, mailboxId), delivery.getParcels());
+        editor.putBoolean(String.format(KEY_SNAPSHOT_CATEGORISING, mailboxId), delivery.isCategorising());
+        editor.apply();
+    }
+
+    @IntRange(from = 0)
+    public static int getNotificationAmount(@NonNull Context context, String mailboxId) {
+        if (TextUtils.isEmpty(mailboxId)) {
+            return 0;
+        }
+
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_NAME,
+                                                                    Context.MODE_PRIVATE);
+        return sharedPref.getInt(String.format(KEY_NOTIFICATION_AMOUNT, mailboxId), 0);
+    }
+
+    public static void saveNotificationAmount(@NonNull Context context,
+                                              @NonNull String mailboxId,
+                                              @IntRange(from = 0) int amount) {
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_NAME,
+                                                                    Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(String.format(KEY_NOTIFICATION_AMOUNT, mailboxId), amount);
+
         editor.apply();
     }
 }

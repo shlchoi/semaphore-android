@@ -1,11 +1,11 @@
 package ca.semaphore.app;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 import com.google.firebase.database.FirebaseDatabase;
 
-public final class SemaphoreApplication extends Application {
+public final class SemaphoreApplication extends MultiDexApplication {
 
     private static boolean isVisible;
 

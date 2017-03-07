@@ -25,6 +25,8 @@ public class MainActivity extends SemaphoreActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_main, fragment);
         transaction.commit();
+
+
     }
 
     public static Intent createIntent(@NonNull Context context) {

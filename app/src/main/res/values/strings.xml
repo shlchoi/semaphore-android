@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Semaphore</string>
 
     <!--LOGIN-->
@@ -15,8 +15,12 @@
     <string name="login_error_password">Please enter your password</string>
 
     <!--MAIN-->
-    <string name="main_current_heading">Currently in mailbox</string>
-    <string name="main_date_heading">EEEE MMMM dd, yyyy</string>
+    <string name="main_current_heading">Currently in your mailbox</string>
+    <string name="main_empty_mailbox">You have no items in your mailbox</string>
+    <string name="main_categorising_mailbox">Categorising items in mailbox</string>
+    <string name="main_no_history">You haven’t received mail\nin this mailbox yet.</string>
+
+    <string name="main_date_heading">MMM dd</string>
     <plurals name="main_letters">
         <item quantity="one">%d letter</item>
         <item quantity="other">%d letters</item>
@@ -37,6 +41,9 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
+
+    <string name="cd_history_expand_icon">See details</string>
+    <string name="cd_history_collapse_icon">Hide details</string>
 
     <!--REGISTRATION-->
     <string name="registration_first_name">First Name</string>
@@ -74,11 +81,12 @@
 
     <!--NOTIFICATIONS-->
     <string name="notification_mail_title">Mail received</string>
-    <plurals name="notification_mail_received_single_mailbox">
+    <string name="notification_mail_received_categorising">You have new items in %1$s</string>
+    <plurals name="notification_mail_received_categorised">
         <item quantity="one">You have %1$d new item in %2$s</item>
         <item quantity="other">You have %1$d new items in %2$s</item>
     </plurals>
-    <string name="notification_mail_received_multi_mailbox" tools:ignore="PluralsCandidate">You have %1$d new items in multiple mailboxes</string>
+    <string name="notification_mail_received_group">You have new items in multiple mailboxes</string>
     <string name="notification_view_mailbox">Go to mailbox</string>
 
 </resources>

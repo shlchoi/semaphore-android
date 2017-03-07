@@ -6,68 +6,154 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingStart="16dp"
+    android:paddingRight="16dp"
+    android:paddingEnd="16dp"
     >
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"
         >
 
         <TextView
-            android:id="@+id/date_text"
+            android:id="@+id/history_date"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|left|start"
-            android:gravity="center_vertical"
-            tools:text="Wednesday September 30, 2017"
+            android:gravity="center_vertical|right|end"
+            tools:text="Sep 30"
+            />
+
+        <ImageView
+            android:id="@+id/history_timeline"
+            android:layout_width="24dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="52dp"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:paddingRight="4dp"
+            android:paddingEnd="4dp"
+            android:src="@color/colorPrimary"
+            android:importantForAccessibility="no"
+            />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="52dp"
+            android:paddingLeft="6dp"
+            android:paddingStart="6dp"
+            android:paddingRight="6dp"
+            android:paddingEnd="6dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_timeline_point"
+            android:importantForAccessibility="no"
             />
 
         <TextView
-            android:id="@+id/items_text"
+            android:id="@+id/history_amount"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="center_vertical|right|end"
-            android:drawablePadding="8dp"
-            android:drawableRight="@drawable/ic_expand"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="76dp"
+            android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             tools:text="5 items"
+            />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/history_expand_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right|end"
+            android:contentDescription="@string/cd_history_expand_icon"
+            tools:src="@drawable/ic_expand_animated"
             />
 
     </FrameLayout>
 
     <net.cachapa.expandablelayout.ExpandableLayout
-        android:id="@+id/items_collapsible"
+        android:id="@+id/history_expandable_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:el_expanded="false"
+        app:el_expanded="true"
+        app:el_duration="500"
         >
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="52dp"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:paddingRight="4dp"
+            android:paddingEnd="4dp"
+            android:src="@color/colorPrimary"
             android:importantForAccessibility="no"
-            android:src="@drawable/shadow"
             />
 
-        <include layout="@layout/item_mail"
-                 android:paddingLeft="16dp"
-                 android:paddingStart="16dp"
-                 android:paddingRight="16dp"
-                 android:paddingEnd="16dp"
-            />
-
-        <ImageView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/top_shadow"
-            android:layout_gravity="bottom"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="76dp"
+            >
+
+            <TextView
+                android:id="@+id/history_letters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_mail"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1 letter"
+                />
+
+            <TextView
+                android:id="@+id/history_magazines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_magazine"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1 magazine"
+                />
+
+            <TextView
+                android:id="@+id/history_newspapers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_newspaper"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1 newspaper"
+                />
+
+            <TextView
+                android:id="@+id/history_parcels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_parcel"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1 parcel"
+                />
+
+        </LinearLayout>
 
     </net.cachapa.expandablelayout.ExpandableLayout>
 
