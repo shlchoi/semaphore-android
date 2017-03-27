@@ -23,7 +23,6 @@
         android:layout_marginBottom="32dp"
         android:hint="@string/mailbox_serial"
         android:textSize="16sp"
-        android:enabled="false"
         />
 
     <Button

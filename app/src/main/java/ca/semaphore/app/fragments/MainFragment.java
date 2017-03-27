@@ -229,6 +229,7 @@ public class MainFragment extends Fragment {
                                      loadingHistoryView.setVisibility(View.GONE);
                                  });
         updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(), mailbox.getMailboxId()));
+        DataBus.sendEvent(new AckEvent(mailbox.getMailboxId()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
