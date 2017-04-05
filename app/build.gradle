@@ -1,22 +1,27 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
+apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties");
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    signingConfigs {
-        release {
-       	    storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-	    }
+    if (keystorePropertiesFile.canRead()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        if (keystoreProperties != null) {
+            signingConfigs {
+                release {
+                    storeFile file(keystoreProperties['storeFile'])
+                    storePassword keystoreProperties['storePassword']
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                }
+            }
+        }
     }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -37,7 +42,9 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (keystoreProperties != null) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             applicationIdSuffix ".debug"
@@ -84,19 +91,12 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.0@aar') {
-        transitive = true;
-    }
-
     compile 'com.facebook.stetho:stetho:1.4.2'
 
-    compile 'com.jakewharton:butterknife:8.2.1'
-
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     testCompile 'junit:junit:4.12'
-
-    retrolambdaConfig 'com.jakewharton.retrolambda:retrolambda:2.1.0-jake1'
 }
 
 checkstyle {

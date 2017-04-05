@@ -24,19 +24,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ca.semaphore.app.R;
+import ca.semaphore.app.R2;
 import ca.semaphore.app.models.Mailbox;
 
 public class MailboxFragment extends Fragment {
 
     private static final String TAG = MailboxFragment.class.getCanonicalName();
 
-    @BindView(R.id.mailbox_name)
+    @BindView(R2.id.mailbox_name)
     EditText mMailboxName;
 
-    @BindView(R.id.mailbox_serial)
+    @BindView(R2.id.mailbox_serial)
     EditText mMailboxSerial;
 
-    @BindView(R.id.mailbox_button)
+    @BindView(R2.id.mailbox_button)
     Button mMailboxButton;
 
     private FirebaseAuth mAuth;
@@ -102,7 +103,7 @@ public class MailboxFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.mailbox_button)
+    @OnClick(R2.id.mailbox_button)
     public void onMailboxClick() {
         boolean valid = true;
         if (TextUtils.isEmpty(mMailboxName.getText())) {

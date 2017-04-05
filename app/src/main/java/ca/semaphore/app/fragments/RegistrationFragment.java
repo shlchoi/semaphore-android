@@ -23,25 +23,26 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ca.semaphore.app.R;
+import ca.semaphore.app.R2;
 import ca.semaphore.app.models.User;
 
 public class RegistrationFragment extends Fragment {
 
     private static final String TAG = RegistrationFragment.class.getCanonicalName();
 
-    @BindView(R.id.registration_first_name)
+    @BindView(R2.id.registration_first_name)
     EditText mFirstName;
 
-    @BindView(R.id.registration_last_name)
+    @BindView(R2.id.registration_last_name)
     EditText mLastName;
 
-    @BindView(R.id.registration_email)
+    @BindView(R2.id.registration_email)
     EditText mEmail;
 
-    @BindView(R.id.registration_password)
+    @BindView(R2.id.registration_password)
     EditText mPassword;
 
-    @BindView(R.id.registration_confirm_password)
+    @BindView(R2.id.registration_confirm_password)
     EditText mConfirmPassword;
 
     private FirebaseAuth mAuth;
@@ -107,7 +108,7 @@ public class RegistrationFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.registration_button)
+    @OnClick(R2.id.registration_button)
     public void onRegisterClick() {
         boolean valid = true;
         if (TextUtils.isEmpty(mFirstName.getText())) {

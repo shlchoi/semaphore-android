@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ca.semaphore.app.R;
+import ca.semaphore.app.R2;
 import ca.semaphore.app.activities.LoginActivity;
 import ca.semaphore.app.activities.MainActivity;
 import ca.semaphore.app.activities.RegistrationActivity;
@@ -33,25 +34,25 @@ public class LoginFragment extends Fragment {
 
     private static final String TAG = LoginFragment.class.getCanonicalName();
 
-    @BindView(R.id.login_email)
+    @BindView(R2.id.login_email)
     TextView mEmail;
 
-    @BindView(R.id.login_password)
+    @BindView(R2.id.login_password)
     TextView mPassword;
 
-    @BindView(R.id.login_button)
+    @BindView(R2.id.login_button)
     Button mButton;
 
-    @BindView(R.id.login_logo_container)
+    @BindView(R2.id.login_logo_container)
     View mLogoContainer;
 
-    @BindView(R.id.login_logo)
+    @BindView(R2.id.login_logo)
     ImageView mLogo;
 
-    @BindView(R.id.login_background)
+    @BindView(R2.id.login_background)
     View mBackground;
 
-    @BindView(R.id.login_form_layout)
+    @BindView(R2.id.login_form_layout)
     View mFormLayout;
 
     private FirebaseAuth mAuth;
@@ -142,7 +143,7 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.login_button)
+    @OnClick(R2.id.login_button)
     void onLoginClick() {
         if (!verifyInputs()) {
             return;
@@ -194,12 +195,12 @@ public class LoginFragment extends Fragment {
         return valid;
     }
 
-    @OnClick(R.id.login_forgot_password)
+    @OnClick(R2.id.login_forgot_password)
     void onForgotPasswordClick() {
 
     }
 
-    @OnClick(R.id.login_register)
+    @OnClick(R2.id.login_register)
     void onRegisterClick() {
         RegistrationActivity.startForResult(getActivity(), LoginActivity.REQUEST_CODE_REGISTER);
     }
