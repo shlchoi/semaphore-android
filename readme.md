@@ -41,7 +41,7 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 
 Distributed under the GNU GPLv3 license. See [LICENSE](https://github.com/shlchoi/semaphore-android/blob/master/LICENSE) for more information.
 
-Libraries are used under Google's [Google API Terms of Service](https://developers.google.com/terms/), the [BSD License]() and [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+Libraries are used under Google's [Google API Terms of Service](https://developers.google.com/terms/), the [BSD License](https://opensource.org/licenses/BSD-3-Clause) and [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 ### BSD License
 * [Stetho](http://facebook.github.io/stetho/)
