@@ -15,7 +15,7 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 ### Other Semaphore Repositories
 * [Mailbox Device](https://github.com/shlchoi/semaphore-mailbox)
 * [Web Server](https://github.com/shlchoi/semaphore-server)
-* [Image Processing Algorithm](https://github.com/mattcwc/semaphore-raspi)
+* [Image Processing Algorithm](https://github.com/mattcwc/semaphore-algorithm)
 * [iOS Application](https://github.com/shlchoi/semaphore-ios)
 
 
