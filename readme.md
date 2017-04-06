@@ -1,23 +1,28 @@
 # Semaphore - Android
 
-Semaphore is a system that notifies users when they have new mail, as well as categorizes and quantifies the mail.  This repository holds the Android smartphone application component
+Semaphore is a system that monitors physical mailboxes for deliveries and notifies users when mail arrives. In addition, Semaphore also categorizes and counts the number of items that are currently inside the mailbox and displays the information to the user in an associated smartphone application.  This repository contains the Android Smartphone Component.
+
+Semaphore was created for the Electrical and Computer Engineering Capstone Design Symposium 2017 at the University of Waterloo.
 
 [![CircleCI](https://circleci.com/gh/shlchoi/semaphore-android.svg?style=svg&circle-token=cbed7a3c4f3cdd5a531b9cfe97c04a9fe6c26f24)](https://circleci.com/gh/shlchoi/semaphore-android)
 
 
 ## About Semaphore
+See the [main project page](https://shlchoi.github.io/semaphore) for more information.
 
-Despite the increasing popularity of email and instant messages for communication between parties, physical mail is still in use today for packages, government-issued identification, and other documents. In 2014, Canada Post delivered approximately 9.1 billion items to households across Canada. With the phasing out of door-to-door mail delivery and the volume of mail being distributed on an annual basis, problems in mail management have arisen as homeowners must spend time collecting and sorting mail. Physical mail continues to lack some of the benefits of email, such as the ability to be notified of new deliveries, and the ability to distinguish between different types of mail. The existing inefficiencies with collecting and sorting mail can lead to consequences such as fines or service disconnections due to a late or missed payment.
-
-Semaphore aims to be a solution that can assist users in monitoring mailboxes for external and distant properties, like cottages, but also a solution to inform users of when the mailbox for their primary home has received an important letter or delivery.
+### Other Semaphore Repositories
+* [Mailbox Device](https://github.com/shlchoi/semaphore-mailbox)
+* [Web Server](https://github.com/shlchoi/semaphore-server)
+* [Image Processing Algorithm](https://github.com/mattcwc/semaphore-raspi)
+* [iOS Application](https://github.com/shlchoi/semaphore-ios)
 
 
 ## Authors
 
-* [Samson Choi](https://github.com/shlchoi)
-* [Matthew Chum](https://github.com/mattcwc)
-* [Lawrence Choi](https://github.com/l2choi)
-* [Matthew Leung](https://github.com/mshleung)
+* Samson Choi [Github](https://github.com/shlchoi)
+* Matthew Chum
+* Lawrence Choi
+* Matthew Leung
 
 
 ## Acknowledgments
@@ -32,7 +37,7 @@ Semaphore aims to be a solution that can assist users in monitoring mailboxes fo
 
 ## License
 
-Distributed under the GNU GPLv3 license. See ``LICENSE`` for more information.
+Distributed under the GNU GPLv3 license. See [LICENSE](https://github.com/shlchoi/semaphore-android/blob/master/LICENSE) for more information.
 
 Libraries are used under Google's [Google API Terms of Service](https://developers.google.com/terms/) and the [BSD License]() and [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
