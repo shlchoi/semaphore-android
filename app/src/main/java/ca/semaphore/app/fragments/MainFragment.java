@@ -1,3 +1,14 @@
+/**************************************************************************************************
+ * Semaphore - Android
+ * Android application accompanying Semaphore
+ * See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+ *
+ * MainFragment.java
+ * Copyright (C) 2017 Samson H. Choi
+ *
+ * See https://github.com/shlchoi/semaphore-android/blob/master/LICENSE for license information
+ *************************************************************************************************/
+
 package ca.semaphore.app.fragments;
 
 import android.content.Intent;
@@ -38,6 +49,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ca.semaphore.app.R;
+import ca.semaphore.app.R2;
 import ca.semaphore.app.activities.LoginActivity;
 import ca.semaphore.app.activities.MailboxActivity;
 import ca.semaphore.app.activities.MainActivity;
@@ -76,37 +88,37 @@ public class MainFragment extends Fragment {
     private MailboxDataSource mailboxDataSource;
     private DeliveryDataSource deliveryDataSource;
 
-    @BindView(R.id.main_coordinator_layout)
+    @BindView(R2.id.main_coordinator_layout)
     CoordinatorLayout coordinatorLayout;
 
-    @BindView(R.id.main_letters)
+    @BindView(R2.id.main_letters)
     TextView lettersTextView;
 
-    @BindView(R.id.main_magazines)
+    @BindView(R2.id.main_magazines)
     TextView magazinesTextView;
 
-    @BindView(R.id.main_newspapers)
+    @BindView(R2.id.main_newspapers)
     TextView newspapersTextView;
 
-    @BindView(R.id.main_parcels)
+    @BindView(R2.id.main_parcels)
     TextView parcelsTextView;
 
-    @BindView(R.id.main_empty_mailbox)
+    @BindView(R2.id.main_empty_mailbox)
     TextView emptyMailboxTextView;
 
-    @BindView(R.id.main_categorising_mailbox)
+    @BindView(R2.id.main_categorising_mailbox)
     View categorisingMailboxView;
 
-    @BindView(R.id.main_history_view)
+    @BindView(R2.id.main_history_view)
     View historyView;
 
-    @BindView(R.id.main_empty_history)
+    @BindView(R2.id.main_empty_history)
     View emptyHistoryView;
 
-    @BindView(R.id.main_loading_history)
+    @BindView(R2.id.main_loading_history)
     View loadingHistoryView;
 
-    @BindView(R.id.main_history)
+    @BindView(R2.id.main_history)
     RecyclerView historyRecyclerView;
 
     @Override
@@ -229,6 +241,7 @@ public class MainFragment extends Fragment {
                                      loadingHistoryView.setVisibility(View.GONE);
                                  });
         updateCurrentItems(SemaphoreSharedPrefs.getSnapshot(getActivity(), mailbox.getMailboxId()));
+        DataBus.sendEvent(new AckEvent(mailbox.getMailboxId()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

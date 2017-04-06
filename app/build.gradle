@@ -1,10 +1,31 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
+apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
+
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystoreProperties = new Properties()
 
 android {
+    if (keystorePropertiesFile.canRead()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        if (keystoreProperties != null) {
+            signingConfigs {
+                release {
+                    storeFile file(keystoreProperties['storeFile'])
+                    storePassword keystoreProperties['storePassword']
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                }
+            }
+        }
+    } else {
+        signingConfigs {
+            release { }
+        }
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -17,15 +38,17 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystoreProperties != null) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             applicationIdSuffix ".debug"
@@ -56,14 +79,12 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.android.support:cardview-v7:25.1.1'
     compile 'com.android.support:design:25.1.1'
     compile 'com.android.support:support-v4:25.1.1'
     compile 'com.android.support:recyclerview-v7:25.1.1'
-
     compile 'com.android.support:multidex:1.0.1'
 
     compile 'com.google.firebase:firebase-core:9.2.1'
@@ -74,18 +95,12 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
-    compile 'com.jakewharton:butterknife:8.2.1'
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
-
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.0@aar') {
-        transitive = true;
-    }
-
     compile 'com.facebook.stetho:stetho:1.4.2'
 
-    testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
-    retrolambdaConfig 'com.jakewharton.retrolambda:retrolambda:2.1.0-jake1'
+    testCompile 'junit:junit:4.12'
 }
 
 checkstyle {

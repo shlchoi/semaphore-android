@@ -1,6 +1,16 @@
+/**************************************************************************************************
+ * Semaphore - Android
+ * Android application accompanying Semaphore
+ * See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+ *
+ * MailboxFragment.java
+ * Copyright (C) 2017 Samson H. Choi
+ *
+ * See https://github.com/shlchoi/semaphore-android/blob/master/LICENSE for license information
+ *************************************************************************************************/
+
 package ca.semaphore.app.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,25 +31,24 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.UUID;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ca.semaphore.app.R;
+import ca.semaphore.app.R2;
 import ca.semaphore.app.models.Mailbox;
 
 public class MailboxFragment extends Fragment {
 
     private static final String TAG = MailboxFragment.class.getCanonicalName();
 
-    @BindView(R.id.mailbox_name)
+    @BindView(R2.id.mailbox_name)
     EditText mMailboxName;
 
-    @BindView(R.id.mailbox_serial)
+    @BindView(R2.id.mailbox_serial)
     EditText mMailboxSerial;
 
-    @BindView(R.id.mailbox_button)
+    @BindView(R2.id.mailbox_button)
     Button mMailboxButton;
 
     private FirebaseAuth mAuth;
@@ -50,6 +59,7 @@ public class MailboxFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -62,14 +72,12 @@ public class MailboxFragment extends Fragment {
         return view;
     }
 
-    @SuppressLint("SetTextI18n") // TODO: remove mailbox serial when decision made
     @Override
     public void onViewCreated(@Nullable View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mMailboxSerial.setText("temp_" + UUID.randomUUID().toString());
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
@@ -106,7 +114,7 @@ public class MailboxFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.mailbox_button)
+    @OnClick(R2.id.mailbox_button)
     public void onMailboxClick() {
         boolean valid = true;
         if (TextUtils.isEmpty(mMailboxName.getText())) {

@@ -1,3 +1,14 @@
+/**************************************************************************************************
+ * Semaphore - Android
+ * Android application accompanying Semaphore
+ * See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+ *
+ * FirebaseService.java
+ * Copyright (C) 2017 Samson H. Choi
+ *
+ * See https://github.com/shlchoi/semaphore-android/blob/master/LICENSE for license information
+ *************************************************************************************************/
+
 package ca.semaphore.app.services;
 
 import android.app.PendingIntent;
@@ -218,24 +229,13 @@ public class FirebaseService extends Service {
                                  long timestamp) {
         deliveryDataSource.update(this, mailbox.getMailboxId(), delivery, null);
 
-        if (delivery.getTimestamp() > timestamp && (delivery.isCategorising() || delivery.getTotal() > 0)) {
-            notify(mailbox, delivery);
+        if (delivery.getTimestamp() > timestamp && delivery.isCategorising()) {
+            notify(mailbox);
         }
     }
 
-    private void notify(@NonNull Mailbox mailbox, @NonNull Delivery delivery) {
-        String message;
-        if (delivery.isCategorising()) {
-            message = getString(R.string.notification_mail_received_categorising, mailbox.getName());
-        } else {
-            int notificationAmount = SemaphoreSharedPrefs.getNotificationAmount(this, mailbox.getMailboxId());
-            notificationAmount += delivery.getTotal();
-            SemaphoreSharedPrefs.saveNotificationAmount(this, mailbox.getMailboxId(), notificationAmount);
-            message = getResources().getQuantityString(R.plurals.notification_mail_received_categorised,
-                                                       notificationAmount,
-                                                       notificationAmount,
-                                                       mailbox.getName());
-        }
+    private void notify(@NonNull Mailbox mailbox) {
+        String message = getString(R.string.notification_mail_received_categorising, mailbox.getName());
         notificationMessageMap.put(mailbox.getMailboxId(), message);
         Log.i(TAG, message);
 
@@ -305,10 +305,12 @@ public class FirebaseService extends Service {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAcknowledgeNotification(@NonNull AckEvent ackEvent) {
-        notificationManager.cancel(notificationIdMap.get(ackEvent.mailboxId));
-        SemaphoreSharedPrefs.saveNotificationAmount(this, ackEvent.mailboxId, 0);
-        notificationMessageMap.remove(ackEvent.mailboxId);
-        createSummaryNotification();
+        if (notificationIdMap.containsKey(ackEvent.mailboxId)) {
+            notificationManager.cancel(notificationIdMap.get(ackEvent.mailboxId));
+            SemaphoreSharedPrefs.saveNotificationAmount(this, ackEvent.mailboxId, 0);
+            notificationMessageMap.remove(ackEvent.mailboxId);
+            createSummaryNotification();
+        }
     }
 
     private void unregisterSnapshotListener(@NonNull String mailboxId) {
