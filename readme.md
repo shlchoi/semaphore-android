@@ -21,10 +21,10 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 
 ## Authors
 
-* Samson Choi [Github](https://github.com/shlchoi)
-* Matthew Chum
-* Lawrence Choi
-* Matthew Leung
+* Samson Choi 	[Github](https://github.com/shlchoi)
+* Matthew Chum 	[Github](https://github.com/mattcwc)
+* Lawrence Choi	[Github](https://github.com/l2choi)
+* Matthew Leung [Github](https://github.com/mshleung)
 
 
 ## Acknowledgments
