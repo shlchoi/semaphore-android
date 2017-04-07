@@ -15,8 +15,26 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 ### Other Semaphore Repositories
 * [Mailbox Device](https://github.com/shlchoi/semaphore-mailbox)
 * [Web Server](https://github.com/shlchoi/semaphore-server)
-* [Image Processing Algorithm](https://github.com/mattcwc/semaphore-raspi)
+* [Image Processing Algorithm](https://github.com/mattcwc/semaphore-algorithm)
 * [iOS Application](https://github.com/shlchoi/semaphore-ios)
+
+## Setup
+1. Clone project using `git clone git@github.com:shlchoi/semaphore-android.git`
+2. In the [Firebase Console](https://console.firebase.google.com), create a new project
+3. Add a mobile Android app for the debug build variant using the package name `ca.semaphore.app.debug`
+4. Add another mobile Android app for the release build variant using the package name `ca.semaphore.app`
+5. Download the generated `google-services.json` file, and put it into the `app/` folder
+6. Open project in Android Studio
+7. Download the Android Support Libraries using the built-in Android SDK Manager in Android Studio
+8. Create a file called `keystore.properties` in the root project folder
+9. Create a new keystore or using an existing one, and add the following information to `keystore.properties`
+```
+storeFile=[path to file]
+storePassword=[password for the keystore]
+keyAlias=[name of the key used for signing the application]
+keyPassword=[password for the key]
+```
+10. Build the application
 
 
 ## Authors
@@ -28,7 +46,7 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 
 
 ## Acknowledgments
-* Google - [Android Support Libraries](https://developer.android.com/topic/libraries/support-library/index.html)
+* Google, The Android Open Source Project - [Android Support Libraries](https://developer.android.com/topic/libraries/support-library/index.html)
 * [Firebase](https://firebase.google.com) - [Android Firebase Libraries](https://firebase.google.com/docs/android/)
 * [Daniel Cachapa](https://github.com/cachapa) - [Expandable Layout Library](https://github.com/cachapa/ExpandableLayout)
 * [Markus Junginger, GreenRobot](http://greenrobot.org/) - [EventBus](http://greenrobot.org/eventbus/)
@@ -41,12 +59,13 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 
 Distributed under the GNU GPLv3 license. See [LICENSE](https://github.com/shlchoi/semaphore-android/blob/master/LICENSE) for more information.
 
-Libraries are used under Google's [Google API Terms of Service](https://developers.google.com/terms/), the [BSD License](https://opensource.org/licenses/BSD-3-Clause) and [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+Libraries are used under Google's [Google API Terms of Service](https://developers.google.com/terms/), Firebase's [Terms of Service](https://www.firebase.com/terms/terms-of-service.html), the [BSD License](https://opensource.org/licenses/BSD-3-Clause) and [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 ### BSD License
 * [Stetho](http://facebook.github.io/stetho/)
 
 ### Apache License
+* [Android Support Libraries](https://developer.android.com/topic/libraries/support-library/index.html)
 * [Expandable Layout Library](https://github.com/cachapa/ExpandableLayout)
 * [EventBus](http://greenrobot.org/eventbus/)
 * [Retrolambda Plugin](https://github.com/evant/gradle-retrolambda)
