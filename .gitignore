@@ -10,3 +10,4 @@ gradle.properties
 *.jks
 *.apk
 keystore.properties
+google-services.json
